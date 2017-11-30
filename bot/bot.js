@@ -11,7 +11,9 @@ const express = require('express'),
     help = require('./../dialogs/help'),
     billingdetails = require('./../dialogs/billingdetails'),
     purchase = require('./../dialogs/purchase'),
-    payment = require('./../dialogs/payment');
+    payment = require('./../dialogs/payment'),
+    tools = require('./../utils/tools'),
+    store = require('store');
 
 
 
@@ -29,13 +31,17 @@ var connector = new builder.ChatConnector({
     appPassword: ''
 });
 
+// app.post('/api/messages', (req, res) => {
+//     console.log(req);
+// })
 
 app.post('/api/messages', connector.listen());
 
 
+
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
 var bot = new builder.UniversalBot(connector, [mainmenu, function(session, result) {
-
+    console.log(session.message);
     if (!result.response) {
         // exhausted attemps and no selection, start over
         session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
@@ -94,6 +100,16 @@ bot.dialog('Watches', watches);
 bot.dialog('Mobiles', mobiles);
 bot.dialog('Laptops', laptops);
 bot.dialog('Help', help);
+
+
+
+app.post('/test', (req, res) => {
+    console.log(req.body.address);
+    var msg = new builder.Message().address(req.body.address);
+    msg.text('Hello, this is a notification');
+    msg.textLocale('en-US');
+    bot.send(msg);
+});
 
 
 // Catching error message
