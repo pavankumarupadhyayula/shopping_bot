@@ -41,7 +41,7 @@ module.exports = [function(session) {
                     .subtitle(requestData[i].ProductSubName + ", Price: $" + requestData[i].ProductPrice)
                     .text(requestData[i].ProductDescription)
                     .images([builder.CardImage.create(session, config.API_SERVER_PATH + "/" + requestData[i].ProductImgURL)])
-                    .buttons([builder.CardAction.imBack(session, "Add to cart " + requestData[i].ProductName, 'Add to cart')]);
+                    .buttons([builder.CardAction.imBack(session, "Product Watch," + requestData[i].ProductName, 'Add to cart')]);
                 products.push(card);
             }
         }

@@ -10,7 +10,9 @@ const express = require('express'),
     mainmenu = require('./../dialogs/mainmenu'),
     help = require('./../dialogs/help'),
     billingdetails = require('./../dialogs/billingdetails'),
-    { DialogCallBackLabels } = require('./../dialogs/menu');
+    purchase = require('./../dialogs/purchase'),
+    payment = require('./../dialogs/payment');
+
 
 
 app.set('PORT', config.defaultPort);
@@ -29,12 +31,6 @@ var connector = new builder.ChatConnector({
 
 
 app.post('/api/messages', connector.listen());
-
-
-let customerdata = [],
-    object = {},
-    clientId;
-
 
 
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
@@ -58,55 +54,15 @@ var bot = new builder.UniversalBot(connector, [mainmenu, function(session, resul
 }]);
 
 
+bot.dialog('purchase', purchase).triggerAction({
+    matches: /Product/i
+});
 
 
-bot.dialog('buy', [function(session) {
-            //Client Id for each session
-            clientId = session.message.sourceEvent.clientActivityId;
-            clientId = clientId.substr(0, clientId.indexOf("."));
 
-            let msg = session.message.text;
-            msg = msg.replace("Add to cart ", "");
-
-            //Storing Messages;
-            if (!object.hasOwnProperty(clientId)) {
-                object[clientId] = { "Item": [msg] };
-            } else {
-                object[clientId].Item.push(msg);
-            }
-
-            builder.Prompts.choice(session, 'Item add to cart, Do you want to purchase more..', [DialogCallBackLabels.Yes, DialogCallBackLabels.No]);
-        },
-        function(session, result) {
-
-
-            if (!result.response) {
-                // exhausted attemps and no selection, start over
-                session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
-                return session.endDialog();
-            }
-
-            // on error, start over
-            session.on('error', function(err) {
-                session.send('Failed with message: %s', err.message);
-                session.endDialog();
-            });
-
-            // continue on proper dialog
-            var selection = result.response.entity;
-            switch (selection) {
-                case 'Yes':
-                    session.endDialog();
-                case 'No':
-                    return session.beginDialog(selection);
-            }
-
-        }
-    ])
-    .triggerAction({
-        matches: /Add to cart/i
-    });
-
+bot.dialog('pay', payment).triggerAction({
+    matches: /Pay/i
+});
 
 
 
