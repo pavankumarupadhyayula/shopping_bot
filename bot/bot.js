@@ -103,12 +103,13 @@ bot.dialog('Help', help);
 
 
 
-app.post('/test', (req, res) => {
-    console.log(req.body.address);
+app.post('/callback', (req, res) => {
+    console.log("callback", req.body);
     var msg = new builder.Message().address(req.body.address);
-    msg.text('Hello, this is a notification');
+    msg.text('Payment Accepted');
     msg.textLocale('en-US');
     bot.send(msg);
+    res.send('ok');
 });
 
 

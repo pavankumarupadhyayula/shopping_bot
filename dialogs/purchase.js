@@ -49,10 +49,8 @@ module.exports = [function(session) {
     switch (selection) {
         case 'Yes':
             session.endDialog();
-            break;
         case 'No':
             sessionmanager.setSessionData(object);
             return session.beginDialog(selection);
-            break;
     }
 }]
