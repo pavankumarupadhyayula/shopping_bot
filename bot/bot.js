@@ -19,7 +19,6 @@ const express = require('express'),
 
 
 
-
 app.set('PORT', config.defaultPort);
 
 // parse application/x-www-form-urlencoded
@@ -36,7 +35,6 @@ var connector = new builder.ChatConnector({
 
 
 app.post('/api/messages', connector.listen());
-
 
 
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
@@ -65,19 +63,20 @@ bot.dialog('purchase', purchase).triggerAction({
 });
 
 
-
 bot.dialog('pay', payment).triggerAction({
     matches: /Pay/i
+});
+
+bot.dialog('cancel', [function(session) {
+    session.send('Your order has been cancelled').endDialog()
+}]).triggerAction({
+    matches: /Cancel/i
 });
 
 
 
 bot.dialog('Yes', buymenu);
-
-
-
 bot.dialog('No', billingdetails);
-
 
 bot.dialog('Buy', buymenu);
 bot.dialog('TrackOrder', trackorder);
@@ -88,14 +87,19 @@ bot.dialog('Laptops', laptops);
 bot.dialog('Help', help);
 
 
-
 app.post('/callback', (req, res) => {
     console.log("callback", req.body);
     var msg = new builder.Message().address(req.body.address);
-    msg.text('Payment Accepted');
+    if (req.body.status == 'ACCEPT') {
+        msg.text('Your Order Confirmed \r \n  OrderID:123456');
+    } else {
+        msg.text('Sorry unable to place your order \r \n Order Failed');
+    }
+
     msg.textLocale('en-US');
     bot.send(msg);
     res.send('ok');
+    session.endDialog();
 });
 
 
