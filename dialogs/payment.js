@@ -8,6 +8,7 @@ const builder = require('botbuilder'),
 
 
 module.exports = [function(session) {
+    console.log(JSON.stringify(session.userData.order));
     let options = {
         "method": "POST",
         "uri": config.API_SERVER_PATH + "/v1/prepayment",

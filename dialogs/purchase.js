@@ -6,30 +6,37 @@ const builder = require('botbuilder'),
 
 let customerdata = [],
     object = {},
-    clientId;
-
+    clientId,
+    ProductName;
 module.exports = [function(session) {
     //Client Id for each session
     clientId = session.message.sourceEvent.clientActivityId;
     clientId = tools.substr(clientId);
 
     let msg = session.message.text;
-    msg = msg.replace("Product ", "");
+    console.log(msg);
+    msg = msg.replace("Product ", "").split(",");
+    console.log(msg);
+    ProductName = msg[1];
 
     //Storing Messages;
     if (!object.hasOwnProperty(clientId)) {
-        object[clientId] = { "Item": [{ "ProductType": tools.productType(msg), "productName": tools.productName(msg) }] };
+        object[clientId] = { "Item": [{ "ProductType": msg[0], "productName": msg[1], "price": msg[2].replace("$", "") }] };
     } else {
-        object[clientId].Item.push({ "ProductType": tools.productType(msg), "productName": tools.productName(msg) });
+        object[clientId].Item.push({ "ProductType": msg[0], "productName": msg[1], "price": msg[2].replace("$", "") });
     }
-    builder.Prompts.number(session, `How many  ${ tools.productName(msg)} do you want to purchase?(e.g.: 5 or 10)`);
+    builder.Prompts.number(session, `How many  ${msg[1]} do you want to purchase?(e.g.: 5 or 10)`);
 
 }, function(session, result) {
 
     let msg = result.response;
 
     //Storing Messages;
-    object[clientId]["Item"].push({ "quantity": msg });
+    for (var i = 0; i < object[clientId]["Item"].length; i++) {
+        if (object[clientId]["Item"][i]['productName'] == ProductName)
+            object[clientId]["Item"][i]['quantity'] = msg;
+    }
+
     builder.Prompts.choice(session, `Item add to cart, Do you want to purchase more..`, [DialogCallBackLabels.Yes, DialogCallBackLabels.No]);
 }, function(session, result) {
     if (!result.response) {

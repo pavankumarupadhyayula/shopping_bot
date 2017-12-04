@@ -13,7 +13,10 @@ const express = require('express'),
     purchase = require('./../dialogs/purchase'),
     payment = require('./../dialogs/payment'),
     tools = require('./../utils/tools'),
-    store = require('store');
+    store = require('store'),
+    buymenu = require('./../dialogs/buymenu'),
+    trackorder = require('./../dialogs/trackorder');
+
 
 
 
@@ -31,9 +34,6 @@ var connector = new builder.ChatConnector({
     appPassword: ''
 });
 
-// app.post('/api/messages', (req, res) => {
-//     console.log(req);
-// })
 
 app.post('/api/messages', connector.listen());
 
@@ -72,29 +72,15 @@ bot.dialog('pay', payment).triggerAction({
 
 
 
-bot.dialog('Yes', [mainmenu, function(session, result) {
-
-    if (!result.response) {
-        // exhausted attemps and no selection, start over
-        session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
-        return session.endDialog();
-    }
-
-    // on error, start over
-    session.on('error', function(err) {
-        session.send('Failed with message: %s', err.message);
-        session.endDialog();
-    });
-
-    var selection = result.response.entity.replace(" ", "");
-    return session.beginDialog(selection);
-
-}]);
+bot.dialog('Yes', buymenu);
 
 
 
 bot.dialog('No', billingdetails);
 
+
+bot.dialog('Buy', buymenu);
+bot.dialog('TrackOrder', trackorder);
 
 bot.dialog('Watches', watches);
 bot.dialog('Mobiles', mobiles);

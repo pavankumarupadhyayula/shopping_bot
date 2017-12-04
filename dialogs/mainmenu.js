@@ -1,7 +1,7 @@
 'use strict';
 const builder = require('botbuilder'),
-    { DialogLabels } = require('./menu');
+    { DialogLabelsMain } = require('./menu');
 
 module.exports = function(session) {
-    builder.Prompts.choice(session, 'Dear Customer, Do you want to Buy', [DialogLabels.Watches, DialogLabels.Mobiles, DialogLabels.Laptops, DialogLabels.Help])
+    builder.Prompts.choice(session, 'Dear Customer, Please chose your option...', [DialogLabelsMain.Buy, DialogLabelsMain.TrackOrder, DialogLabelsMain.Help])
 }
