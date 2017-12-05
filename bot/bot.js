@@ -19,7 +19,7 @@ const express = require('express'),
 
 
 
-app.set('PORT', config.defaultPort);
+app.set('PORT', process.env.PORT || config.defaultPort);
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))

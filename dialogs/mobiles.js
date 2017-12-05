@@ -18,7 +18,7 @@ module.exports = function(session) {
 
     let options = {
             "method": "GET",
-            "uri": config.API_SERVER_PATH + "/v1/mobiles",
+            "uri": config.API_SERVER_PATH + "/mobiles",
             timeout: 60000
         },
         products = [];

@@ -22,7 +22,7 @@ module.exports = [function(session) {
 
     let options = {
             "method": "GET",
-            "uri": config.API_SERVER_PATH + "/v1/watches",
+            "uri": config.API_SERVER_PATH + "/watches",
             timeout: 60000
         },
         products = [];
