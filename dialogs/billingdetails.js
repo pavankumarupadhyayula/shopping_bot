@@ -67,7 +67,7 @@ module.exports = [function(session) {
                 .subtitle("Purchased items will be delivered here")
                 .text(`${shippingDetails.firstname} ${shippingDetails.lastname},${shippingDetails.email},${shippingDetails.phonenumber},${shippingDetails.street1},${shippingDetails.street2},${shippingDetails.city},${shippingDetails.state},${shippingDetails.zipcode},${shippingDetails.country}`)
                 .images([builder.CardImage.create(session, config.API_SERVER_PATH + "/gallery/images/shipping.png")])
-                .buttons([builder.CardAction.openUrl(session, config.UI_SERVER_PATH + '/' + body, "Payment"), builder.CardAction.imBack(session, "cancel", "Cancel")]);
+                .buttons([builder.CardAction.openUrl(session, config.UI_SERVER_PATH + '/' + session.userData.clientId, "Payment"), builder.CardAction.imBack(session, "cancel", "Cancel")]);
 
             var cardMsg = new builder.Message(session)
                 .addAttachment(card);
