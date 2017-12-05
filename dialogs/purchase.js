@@ -14,6 +14,7 @@ module.exports = [function(session) {
     // clientId = clientId);
     console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     console.log(clientId);
+    session.userData.clientId = clientId;
     let msg = session.message.text;
     console.log(msg);
     msg = msg.replace("Product ", "").split(",");

@@ -43,9 +43,9 @@ module.exports = [function(session) {
     },
     function(session, result) {
         session.userData.country = result.response;
-        let clientId = session.message.sourceEvent.clientActivityId,
-            purchaseDetails = sessionmanager.getSessionData(tools.substr(clientId));
-        session.userData.clientId = tools.substr(clientId);
+        let clientId = session.userData.clientId,
+            purchaseDetails = sessionmanager.getSessionData(clientId);
+        //session.userData.clientId = clientId;
         session.userData.order = purchaseDetails;
 
         let shippingDetails = session.userData;
