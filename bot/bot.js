@@ -29,8 +29,8 @@ app.use(bodyParser.json())
 
 //bot microsoft appId and appPassword
 var connector = new builder.ChatConnector({
-    appId: '47a972fe-8c48-4d96-98c8-67331bc20e3e',
-    appPassword: 'zxjPPQ740$~gyiaFVKI27;@'
+    appId: '',
+    appPassword: ''
 });
 
 
