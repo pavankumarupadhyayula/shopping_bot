@@ -10,9 +10,10 @@ let customerdata = [],
     ProductName;
 module.exports = [function(session) {
     //Client Id for each session
-    clientId = session.message.sourceEvent.clientActivityId;
-    clientId = tools.substr(clientId);
-
+    clientId = session.message.address.id;
+    // clientId = clientId);
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+    console.log(clientId);
     let msg = session.message.text;
     console.log(msg);
     msg = msg.replace("Product ", "").split(",");
