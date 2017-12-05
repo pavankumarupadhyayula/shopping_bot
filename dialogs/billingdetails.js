@@ -2,7 +2,10 @@
 const builder = require('botbuilder'),
     sessionmanager = require('./../utils/sessionmanager'),
     tools = require('./../utils/tools'),
-    config = require('./../bin/configuration');
+    config = require('./../bin/configuration'),
+    request = require('request'),
+    store = require('store'),
+    uuid = require('uuid/v4');
 
 module.exports = [function(session) {
         builder.Prompts.text(session, "Please provide  First Name?(e.g.:Pavan Kumar)");
@@ -50,16 +53,27 @@ module.exports = [function(session) {
 
         let shippingDetails = session.userData;
 
-        let card = new builder.ThumbnailCard(session)
-            .title("Shipping Address")
-            .subtitle("Purchased items will be delivered here")
-            .text(`${shippingDetails.firstname} ${shippingDetails.lastname},${shippingDetails.email},${shippingDetails.phonenumber},${shippingDetails.street1},${shippingDetails.street2},${shippingDetails.city},${shippingDetails.state},${shippingDetails.zipcode},${shippingDetails.country}`)
-            .images([builder.CardImage.create(session, config.API_SERVER_PATH + "/v1/gallery/images/shipping.png")])
-            .buttons([builder.CardAction.postBack(session, 'Pay', "Payment"), builder.CardAction.imBack(session, "cancel", "Cancel")]);
 
-        var cardMsg = new builder.Message(session)
-            .addAttachment(card);
+        console.log(JSON.stringify(session.userData.order));
+        let options = {
+            "method": "POST",
+            "uri": config.API_SERVER_PATH + "/prepayment",
+            "json": { "clientId": session.userData.clientId, "orderDetails": session.userData, "botAddress": session.message.address, "transactionId": uuid() },
+            "timeout": 60000
+        };
+        request(options, function(err, response, body) {
+            let card = new builder.ThumbnailCard(session)
+                .title("Shipping Address")
+                .subtitle("Purchased items will be delivered here")
+                .text(`${shippingDetails.firstname} ${shippingDetails.lastname},${shippingDetails.email},${shippingDetails.phonenumber},${shippingDetails.street1},${shippingDetails.street2},${shippingDetails.city},${shippingDetails.state},${shippingDetails.zipcode},${shippingDetails.country}`)
+                .images([builder.CardImage.create(session, config.API_SERVER_PATH + "/gallery/images/shipping.png")])
+                .buttons([builder.CardAction.openUrl(session, config.UI_SERVER_PATH + '/' + body, "Payment"), builder.CardAction.imBack(session, "cancel", "Cancel")]);
 
-        session.send(cardMsg);
+            var cardMsg = new builder.Message(session)
+                .addAttachment(card);
+
+            session.send(cardMsg);
+        })
+
     }
 ];
