@@ -13,19 +13,17 @@ module.exports = [function(session) {
     clientId = session.message.address.id;
     // clientId = clientId);
     console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-    console.log(clientId);
-    session.userData.clientId = clientId;
     let msg = session.message.text;
     console.log(msg);
     msg = msg.replace("Product ", "").split(",");
     console.log(msg);
     ProductName = msg[1];
-
-    //Storing Messages;
-    if (!object.hasOwnProperty(clientId)) {
-        object[clientId] = { "Item": [{ "ProductType": msg[0], "productName": msg[1], "price": msg[2].replace("$", "") }] };
+    //session.userData.Items = { "Item": [{ "ProductType": msg[0], "productName": msg[1], "price": msg[2].replace("$", "") }] }
+    // //Storing Messages;
+    if (!session.privateConversationData.hasOwnProperty('Items')) {
+        session.privateConversationData.Items = { "Item": [{ "ProductType": msg[0], "productName": msg[1], "price": msg[2].replace("$", "") }] }
     } else {
-        object[clientId].Item.push({ "ProductType": msg[0], "productName": msg[1], "price": msg[2].replace("$", "") });
+        session.privateConversationData.Items.Item.push({ "ProductType": msg[0], "productName": msg[1], "price": msg[2].replace("$", "") });
     }
     builder.Prompts.number(session, `How many  ${msg[1]} do you want to purchase?(e.g.: 5 or 10)`);
 
@@ -34,9 +32,9 @@ module.exports = [function(session) {
     let msg = result.response;
 
     //Storing Messages;
-    for (var i = 0; i < object[clientId]["Item"].length; i++) {
-        if (object[clientId]["Item"][i]['productName'] == ProductName)
-            object[clientId]["Item"][i]['quantity'] = msg;
+    for (var i = 0; i < session.privateConversationData.Items["Item"].length; i++) {
+        if (session.privateConversationData.Items["Item"][i]['productName'] == ProductName)
+            session.privateConversationData.Items["Item"][i]['quantity'] = msg;
     }
 
     builder.Prompts.choice(session, `Item add to cart, Do you want to purchase more..`, [DialogCallBackLabels.Yes, DialogCallBackLabels.No]);
@@ -55,11 +53,12 @@ module.exports = [function(session) {
 
     // continue on proper dialog
     var selection = result.response.entity;
+    
     switch (selection) {
         case 'Yes':
             session.endDialog();
         case 'No':
-            sessionmanager.setSessionData(object);
+            
             return session.beginDialog(selection);
     }
 }]

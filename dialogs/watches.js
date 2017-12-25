@@ -23,13 +23,15 @@ module.exports = [function(session) {
     let options = {
             "method": "GET",
             "uri": config.API_SERVER_PATH + "/watches",
-            timeout: 60000
+            timeout: 60000,
+            strictSSL: false
         },
         products = [];
+        console.log(options.uri);
 
 
     request(options, (err, response, body) => {
-
+         console.log(err);
         let requestData = JSON.parse(body),
             len = requestData.length;
 

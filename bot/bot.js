@@ -9,13 +9,14 @@ const express = require('express'),
     laptops = require('./../dialogs/laptops'),
     mainmenu = require('./../dialogs/mainmenu'),
     help = require('./../dialogs/help'),
-    billingdetails = require('./../dialogs/billingdetails'),
+    { customer, shipping } = require('./../dialogs/billingdetails'),
     purchase = require('./../dialogs/purchase'),
     payment = require('./../dialogs/payment'),
     tools = require('./../utils/tools'),
     store = require('store'),
     buymenu = require('./../dialogs/buymenu'),
     trackorder = require('./../dialogs/trackorder');
+
 
 
 
@@ -29,15 +30,15 @@ app.use(bodyParser.json())
 
 //bot microsoft appId and appPassword
 var connector = new builder.ChatConnector({
-    appId: '47a972fe-8c48-4d96-98c8-67331bc20e3e',
-    appPassword: 'zxjPPQ740$~gyiaFVKI27;@'
+    appId: '', //'47a972fe-8c48-4d96-98c8-67331bc20e3e',
+    appPassword: '' //'zxjPPQ740$~gyiaFVKI27;@'
 });
 
 
 app.post('/api/messages', connector.listen());
 
 
-// Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
+
 var bot = new builder.UniversalBot(connector, [mainmenu, function(session, result) {
     console.log(session.message);
     if (!result.response) {
@@ -58,6 +59,8 @@ var bot = new builder.UniversalBot(connector, [mainmenu, function(session, resul
 }]);
 
 
+
+
 bot.dialog('purchase', purchase).triggerAction({
     matches: /Product/i
 });
@@ -73,10 +76,8 @@ bot.dialog('cancel', [function(session) {
     matches: /Cancel/i
 });
 
-
-
 bot.dialog('Yes', buymenu);
-bot.dialog('No', billingdetails);
+bot.dialog('No', customer);
 
 bot.dialog('Buy', buymenu);
 bot.dialog('TrackOrder', trackorder);
